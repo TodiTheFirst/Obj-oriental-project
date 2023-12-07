@@ -1,9 +1,9 @@
 class Product {
   //class всегда называется с заглавной буквы класс позволяет определить по какому шаблону будут создаваться обьекты
-    title = "DEFAULT";
-    imageUrl;
-    description;
-    price;
+  title = "DEFAULT";
+  imageUrl;
+  description;
+  price;
   //  в данном случае нет смысла назначать параметры т.к мы назначаем их в методе
   constructor(title, image, desc, price) {
     this.title = title;
@@ -18,10 +18,15 @@ class ProductItems {
     this.product = product;
   }
 
+  addToCart() {
+    console.log("Adding product to cart...");
+    console.log(this.product);
+  }
+
   render() {
-      const prodEl = document.createElement("li");
-      prodEl.className = "product-item";
-      prodEl.innerHTML = `
+    const prodEl = document.createElement("li");
+    prodEl.className = "product-item";
+    prodEl.innerHTML = `
              <div>
               <img src="${this.product.imageUrl}" alt="${this.product.title}"> 
               <div class="product-item_content">
@@ -32,9 +37,11 @@ class ProductItems {
               </div>
              </div>
             `;
-            return prodEl;
-    }
-  };
+    const addCartButton = prodEl.querySelector("button ");
+    addCartButton.addEventListener("click", this.addToCart.bind(this));
+    return prodEl;
+  }
+}
 
 class ProductList {
   products = [
@@ -58,13 +65,13 @@ class ProductList {
     const prodList = document.createElement("ul");
     prodList.className = "product-list";
     for (const prod of this.products) {
-        const productItem = new ProductItems(prod);
-        const prodEl = productItem.render();
-        prodList.append(prodEl);
+      const productItem = new ProductItems(prod);
+      const prodEl = productItem.render();
+      prodList.append(prodEl);
+    }
+    renderMaker.append(prodList);
   }
-  renderMaker.append(prodList);
 }
-};
 
 const productList = new ProductList();
 productList.render();
