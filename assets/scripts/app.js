@@ -13,11 +13,46 @@ class Product {
   } //constructor метод который позволяет принимать  параметры как и другие методы а в {} задавать вэлью для этих  параметров
 }
 
-class shoppingCart {
+class ElementAttribute {
+  constructor(attrName, attrValue) {
+    this.name = attrName;
+    this.value = attrValue;
+  }
+}
+
+// класс который будет создовать часть веб страницы также у нас он будет как subClass
+// то что используется после extends
+class Compomemt {
+  constructor(renderMakerId) {
+    this.makerId = renderMakerId;
+  }
+
+  createRootElement(tag, cssClasses, attributes) {
+    const rootElement = document.createElement(tag);
+    if (cssClasses) {
+      rootElement.className = cssClasses;
+    }
+    if (attributes && attributes.length > 0) {
+      for (const attr of attributes) {
+        rootElement.setAttribute(attr.name.name);
+      }
+    }
+    document.getElementById(this.makerId).append(rootElement);
+    return rootElement;
+  }
+}
+
+/* extends в данном случае означает что при создание данного класса он не только создает элеменнты из класса который мы создали
+ но и из класса который мы указали после extends*/
+ //parrent class то что используется до extends
+class shoppingCart extends Compomemt {
   items = [];
 
   set cartItems(value) {
     this.items = value;
+    this.totalOutput.innerHTML = `<h2>Total: \$${this.totalAmount.toFixed(
+      2
+    )}</h2>`;
   }
 
   get totalAmount() {
@@ -26,21 +61,24 @@ class shoppingCart {
     }, 0);
     return sum;
   }
+// при использование супер констратока нужно всегда использовать его до констрактора в сабклассе 
+  constructor(renderMakerId) {
+    super(renderMakerId);
+  }
 
   addProduct(product) {
-    this.items.push(product);
-    this.totalOutput.innerHTML = `<h2>Total: \$${1}</h2>`;
+    const updatedItems = [...this.items];
+    updatedItems.push(product);
+    this.cartItems = updatedItems;
   }
 
   render() {
-    const cartEL = document.createElement("section");
+    const cartEL = this.createRootElement('section', 'cart');
     cartEL.innerHTML = `
    <h2>Total: \$${0}</h2>
    <button>Order Now!</button>
   `;
-    cartEL.className = "cart";
     this.totalOutput = cartEL.querySelector("h2");
-    return cartEL;
   }
 }
 
@@ -104,11 +142,10 @@ class ProductList {
 class Shop {
   render() {
     const renderMaker = document.getElementById("app");
-    this.cart = new shoppingCart();
-    const cartEl = this.cart.render();
+    this.cart = new shoppingCart('app');
+    this.cart.render();
     const productList = new ProductList();
     const prodListEl = productList.render();
-    renderMaker.append(cartEl);
     renderMaker.append(prodListEl);
   }
 }
