@@ -13,6 +13,26 @@ class Product {
   } //constructor метод который позволяет принимать  параметры как и другие методы а в {} задавать вэлью для этих  параметров
 }
 
+class shoppingCart {
+  items = [];
+
+  addProduct(product) {
+    this.items.push(product);
+    this.totalOutput = `<h2>Total: \$${1}</h2>`;
+  }
+
+  render() {
+    const cartEL = document.createElement("section");
+    cartEL.innerHTML = `
+   <h2>Total: \$${0}</h2>
+   <button>Order Now!</button>
+  `;
+    cartEL.className = "cart";
+    this.totalOutput = cartEL.querySelector("h2");
+    return cartEL;
+  }
+}
+
 class ProductItems {
   constructor(product) {
     this.product = product;
@@ -61,7 +81,6 @@ class ProductList {
 
   constructor() {}
   render() {
-    const renderMaker = document.getElementById("app");
     const prodList = document.createElement("ul");
     prodList.className = "product-list";
     for (const prod of this.products) {
@@ -69,9 +88,20 @@ class ProductList {
       const prodEl = productItem.render();
       prodList.append(prodEl);
     }
-    renderMaker.append(prodList);
+    return prodList;
+  }
+}
+class Shop {
+  render() {
+    const renderMaker = document.getElementById("app");
+    const cart = new shoppingCart();
+    const cartEl = cart.render();
+    const productList = new ProductList();
+    const prodListEl = productList.render();
+    renderMaker.append(cartEl);
+    renderMaker.append(prodListEl);
   }
 }
 
-const productList = new ProductList();
-productList.render();
+const shop = new Shop();
+shop.render();
