@@ -23,9 +23,14 @@ class ElementAttribute {
 // класс который будет создовать часть веб страницы также у нас он будет как subClass
 // то что используется после extends
 class Compomemt {
-  constructor(renderMakerId) {
+  constructor(renderMakerId, shouldRender = true) {
     this.makerId = renderMakerId;
+    if (shouldRender) {
+      this.render();
+    }
   }
+
+  render() {}
 
   createRootElement(tag, cssClasses, attributes) {
     const rootElement = document.createElement(tag);
@@ -84,8 +89,9 @@ class shoppingCart extends Compomemt {
 
 class ProductItems extends Compomemt {
   constructor(product, renderMakerId) {
-    super(renderMakerId);
+    super(renderMakerId, false);
     this.product = product;
+    this.render();
   }
 
   addToCart() {
@@ -111,40 +117,54 @@ class ProductItems extends Compomemt {
 }
 
 class ProductList extends Compomemt {
-  products = [
-    new Product(
-      "Green Apple",
-      "https://galafruit.net/wp-content/uploads/galafruit_mele.jpg",
-      "Juice Apple for Breakfast",
-      2
-    ), //new позволяет запускать это как функцию
-    new Product(
-      "Banana",
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQoJhMM5z0R5HJp8FMHGMAXxQmyslAAjDrRCg&usqp=CAU",
-      "Some Banana",
-      5.99
-    ),
-  ];
-
+  products = [];
   constructor(renderMakerId) {
     super(renderMakerId);
+    this.fetchProducts();
   }
+
+  fetchProducts() {
+    this.products = [
+      new Product(
+        "Green Apple",
+        "https://galafruit.net/wp-content/uploads/galafruit_mele.jpg",
+        "Juice Apple for Breakfast",
+        2
+      ), //new позволяет запускать это как функцию
+      new Product(
+        "Banana",
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQoJhMM5z0R5HJp8FMHGMAXxQmyslAAjDrRCg&usqp=CAU",
+        "Some Banana",
+        5.99
+      ),
+    ];
+    this.renderProductcts();
+  }
+
+renderProductcts() {
+  for (const prod of this.products) {
+    new ProductItems(prod, 'prod-list');
+  }
+}
+
+  // this в данном случае применяется к обькту который создаётся
   render() {
     this.createRootElement("ul", "product-list", [
       new ElementAttribute("id", "prod-list"),
     ]);
-    for (const prod of this.products) {
-      const productItem = new ProductItems(prod, "prod-list");
-      productItem.render();
+    if (this.products && this.products.length > 0) {
+      this.renderProductcts();
     }
   }
 }
-class Shop {
+class Shop extends Compomemt {
+  constructor() {
+    super(); // также можно использовать this.render();
+  }
+
   render() {
     this.cart = new shoppingCart("app");
-    this.cart.render();
     const productList = new ProductList("app");
-    productList.render();
   }
 }
 
@@ -152,7 +172,6 @@ class App {
   static cart;
   static init() {
     const shop = new Shop();
-    shop.render();
     this.cart = shop.cart;
   }
 
