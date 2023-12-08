@@ -77,12 +77,19 @@ class shoppingCart extends Compomemt {
     this.cartItems = updatedItems;
   }
 
+  orderProducts() {
+    console.log("Ordering...");
+    console.log(this.items);
+  }
+
   render() {
     const cartEL = this.createRootElement("section", "cart");
     cartEL.innerHTML = `
    <h2>Total: \$${0}</h2>
    <button>Order Now!</button>
   `;
+    const orderButton = cartEL.querySelector("button");
+    orderButton.addEventListener("click", () => this.orderProducts()); // также можно решить через .bind
     this.totalOutput = cartEL.querySelector("h2");
   }
 }
@@ -117,9 +124,11 @@ class ProductItems extends Compomemt {
 }
 
 class ProductList extends Compomemt {
-  products = [];
+  #products = [];
+  // при добавление октоторпа это свойство становится привязанно к данному классу
   constructor(renderMakerId) {
     super(renderMakerId);
+    this.render();
     this.fetchProducts();
   }
 
@@ -141,11 +150,11 @@ class ProductList extends Compomemt {
     this.renderProductcts();
   }
 
-renderProductcts() {
-  for (const prod of this.products) {
-    new ProductItems(prod, 'prod-list');
+  renderProductcts() {
+    for (const prod of this.products) {
+      new ProductItems(prod, "prod-list");
+    }
   }
-}
 
   // this в данном случае применяется к обькту который создаётся
   render() {
@@ -164,7 +173,7 @@ class Shop extends Compomemt {
 
   render() {
     this.cart = new shoppingCart("app");
-    const productList = new ProductList("app");
+    new ProductList("app");
   }
 }
 
