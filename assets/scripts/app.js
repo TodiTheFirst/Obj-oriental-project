@@ -1,9 +1,9 @@
 class Product {
   //class всегда называется с заглавной буквы класс позволяет определить по какому шаблону будут создаваться обьекты
-  title = "DEFAULT";
-  imageUrl;
-  description;
-  price;
+  // title = "DEFAULT";
+  // imageUrl;
+  // description;
+  // price;
   //  в данном случае нет смысла назначать параметры т.к мы назначаем их в методе
   constructor(title, image, desc, price) {
     this.title = title;
@@ -34,7 +34,7 @@ class Compomemt {
     }
     if (attributes && attributes.length > 0) {
       for (const attr of attributes) {
-        rootElement.setAttribute(attr.name.name);
+        rootElement.setAttribute(attr.name, attr.value);
       }
     }
     document.getElementById(this.makerId).append(rootElement);
@@ -44,7 +44,7 @@ class Compomemt {
 
 /* extends в данном случае означает что при создание данного класса он не только создает элеменнты из класса который мы создали
  но и из класса который мы указали после extends*/
- //parrent class то что используется до extends
+//parrent class то что используется до extends
 class shoppingCart extends Compomemt {
   items = [];
 
@@ -61,7 +61,7 @@ class shoppingCart extends Compomemt {
     }, 0);
     return sum;
   }
-// при использование супер констратока нужно всегда использовать его до констрактора в сабклассе 
+  // при использование супер констратока нужно всегда использовать его до констрактора в сабклассе
   constructor(renderMakerId) {
     super(renderMakerId);
   }
@@ -73,7 +73,7 @@ class shoppingCart extends Compomemt {
   }
 
   render() {
-    const cartEL = this.createRootElement('section', 'cart');
+    const cartEL = this.createRootElement("section", "cart");
     cartEL.innerHTML = `
    <h2>Total: \$${0}</h2>
    <button>Order Now!</button>
@@ -82,8 +82,9 @@ class shoppingCart extends Compomemt {
   }
 }
 
-class ProductItems {
-  constructor(product) {
+class ProductItems extends Compomemt {
+  constructor(product, renderMakerId) {
+    super(renderMakerId);
     this.product = product;
   }
 
@@ -92,8 +93,7 @@ class ProductItems {
   }
 
   render() {
-    const prodEl = document.createElement("li");
-    prodEl.className = "product-item";
+    const prodEl = this.createRootElement("li", "product-item");
     prodEl.innerHTML = `
              <div>
               <img src="${this.product.imageUrl}" alt="${this.product.title}"> 
@@ -107,11 +107,10 @@ class ProductItems {
             `;
     const addCartButton = prodEl.querySelector("button ");
     addCartButton.addEventListener("click", this.addToCart.bind(this));
-    return prodEl;
   }
 }
 
-class ProductList {
+class ProductList extends Compomemt {
   products = [
     new Product(
       "Green Apple",
@@ -127,32 +126,30 @@ class ProductList {
     ),
   ];
 
-  constructor() {}
+  constructor(renderMakerId) {
+    super(renderMakerId);
+  }
   render() {
-    const prodList = document.createElement("ul");
-    prodList.className = "product-list";
+    this.createRootElement("ul", "product-list", [
+      new ElementAttribute("id", "prod-list"),
+    ]);
     for (const prod of this.products) {
-      const productItem = new ProductItems(prod);
-      const prodEl = productItem.render();
-      prodList.append(prodEl);
+      const productItem = new ProductItems(prod, "prod-list");
+      productItem.render();
     }
-    return prodList;
   }
 }
 class Shop {
   render() {
-    const renderMaker = document.getElementById("app");
-    this.cart = new shoppingCart('app');
+    this.cart = new shoppingCart("app");
     this.cart.render();
-    const productList = new ProductList();
-    const prodListEl = productList.render();
-    renderMaker.append(prodListEl);
+    const productList = new ProductList("app");
+    productList.render();
   }
 }
 
 class App {
   static cart;
-
   static init() {
     const shop = new Shop();
     shop.render();
