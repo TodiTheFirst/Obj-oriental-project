@@ -190,3 +190,13 @@ class App {
 }
 
 App.init();
+/*class Person {
+  name = 'Oleg'
+}
+const p = new Person();
+typeof p - будет написано object 
+p instanceof Person проверяет на основе чего оно было создано
+const person = {name: 'Oleg', greet(){console.log(this.name)}};
+Object.getOwnPropertyDescriptors(person) - 
+blueprints - мы используем для созадния обьектов основнных на кейворде new
+*/
